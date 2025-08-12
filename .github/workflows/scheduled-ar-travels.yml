@@ -19,4 +19,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run AR CSV Download Script
-        run: python ar-csv-download.py
+        run: python main.py
