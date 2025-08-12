@@ -90,8 +90,9 @@ def run():
 
             # --- Run report & download CSV ---
             page.click('input[type="submit"][value="Run Report"]')
-            page.wait_for_selector("table#report_results", timeout=15000)
-            page.wait_for_selector("a.btn.btn-primary.hide_for_print", timeout=15000)
+            #page.wait_for_selector("table#report_results", timeout=60000)
+            page.wait_for_load_state("networkidle")  # waits until no network requests for 500ms
+            page.wait_for_selector("a.btn.btn-primary.hide_for_print", timeout=60000)
 
             with page.expect_download() as detailed_download:
                 page.locator("a.btn.btn-primary.hide_for_print", has_text="Show Detailed View (CSV)").click()
