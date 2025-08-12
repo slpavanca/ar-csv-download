@@ -1,33 +1,31 @@
-name: Scheduled AR Travels
+name: Download and Upload CSV
 
 on:
-  schedule:
-    - cron: "0 5 * * *"  # Runs daily at 5:00 AM UTC (10:30 AM IST)
   workflow_dispatch:
 
 jobs:
-  run-script:
+  download-report:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install Playwright and dependencies
         run: |
-          pip install -r requirements.txt
+          pip install playwright
+          playwright install --with-deps chromium
 
-      - name: Run Python script
-        run: |
-          python main.py
+      - name: Run download script
+        run: python main.py  # Change this to your actual .py filename
 
-      - name: Upload CSV as artifact
+      - name: Upload downloaded CSV
         uses: actions/upload-artifact@v4
         with:
-          name: ar-travels-csv
-          path: artifacts/
+          name: downloaded-report
+          path: artifacts/report.csv
