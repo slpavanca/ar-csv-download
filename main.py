@@ -9,18 +9,19 @@ def run():
     LOGIN = os.environ.get("AR_LOGIN")
     PASSWORD = os.environ.get("AR_PASSWORD")
 
-    # Direct artifacts folder for GitHub Actions
-    SAVE_DIR = os.path.abspath("./artifacts")
-    TEMP_DIR = os.path.abspath("./downloads")  # Temporary download location
+    # Create artifacts directory for GitHub Actions
+    artifacts_path = os.path.join(os.getcwd(), "artifacts")
+    os.makedirs(artifacts_path, exist_ok=True)
+
+    # Temporary download folder
+    temp_dir = os.path.join(os.getcwd(), "downloads")
+    os.makedirs(temp_dir, exist_ok=True)
+
     HEADLESS = os.environ.get("HEADLESS", "1") != "0"
 
     if not LOGIN or not PASSWORD:
         print("ERROR: set AR_LOGIN and AR_PASSWORD environment variables in GitHub repo Secrets")
         return
-
-    # Create folders
-    os.makedirs(SAVE_DIR, exist_ok=True)
-    os.makedirs(TEMP_DIR, exist_ok=True)
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=HEADLESS)
@@ -95,12 +96,14 @@ def run():
                 page.locator("a.btn.btn-primary.hide_for_print", has_text="Show Detailed View (CSV)").click()
             download = detailed_download.value
 
+            # Save temporarily
             original_filename = download.suggested_filename
-            temp_path = os.path.join(TEMP_DIR, original_filename)
+            temp_path = os.path.join(temp_dir, original_filename)
             download.save_as(temp_path)
             print("📥 Downloaded to temp folder:", temp_path)
 
-            # --- Rename and move to artifacts ---
+            # Try renaming based on date
+            final_path = os.path.join(artifacts_path, "report.csv")  # default fallback
             match = re.search(r"([A-Za-z]+) (\d{4}) (\d{2})", original_filename)
             if match:
                 month_str, year_str, day_str = match.groups()
@@ -111,15 +114,14 @@ def run():
                     old_date_str = f"{month_str} {year_str} {day_str}"
                     new_filename = original_filename.replace(old_date_str, new_date_str)
                     new_filename = f"AR {new_filename}"
-                    final_path = os.path.join(SAVE_DIR, new_filename)
-                    shutil.move(temp_path, final_path)
-                    print(f"✅ Renamed and moved to artifacts: {final_path}")
+                    final_path = os.path.join(artifacts_path, new_filename)
+                    print(f"✅ Renamed file will be: {new_filename}")
                 except Exception as e:
                     print("❌ Failed to parse date or rename:", e)
-                    shutil.move(temp_path, os.path.join(SAVE_DIR, original_filename))
-            else:
-                print("❌ Date not found in filename. Moving with original name.")
-                shutil.move(temp_path, os.path.join(SAVE_DIR, original_filename))
+
+            # Move file into artifacts
+            shutil.move(temp_path, final_path)
+            print(f"📦 Final file saved to artifacts: {final_path}")
 
         except Exception as e:
             print("ERROR during run:", str(e))
