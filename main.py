@@ -7,13 +7,16 @@ from playwright.sync_api import sync_playwright
 def run():
     LOGIN = os.environ.get("AR_LOGIN")
     PASSWORD = os.environ.get("AR_PASSWORD")
-    SAVE_DIR = os.environ.get("SAVE_DIR", "/github/workspace/artifacts")
+
+    # Always save to ./artifacts so GitHub Actions can upload
+    SAVE_DIR = os.environ.get("SAVE_DIR", "./artifacts")
     HEADLESS = os.environ.get("HEADLESS", "1") != "0"
 
     if not LOGIN or not PASSWORD:
         print("ERROR: set AR_LOGIN and AR_PASSWORD environment variables in GitHub repo Secrets")
         return
 
+    # Create the artifacts folder if it doesn't exist
     os.makedirs(SAVE_DIR, exist_ok=True)
 
     with sync_playwright() as p:
