@@ -30,7 +30,8 @@ def run():
 
         try:
             # --- Login ---
-            page.goto("https://arll.artravels.in/")
+            #page.goto("https://arll.artravels.in/")
+            page.goto("https://arll.ticketsimply.com")
             page.fill('input[name="login"]', LOGIN)
             page.fill('input[name="password"]', PASSWORD)
             page.click('input#login_button')
