@@ -23,6 +23,9 @@ jobs:
 
       - name: Run download script
         run: python main.py  # Change this to your actual .py filename
+        env:
+          AR_LOGIN: ${{ secrets.AR_LOGIN }}
+          AR_PASSWORD: ${{ secrets.AR_PASSWORD }}
 
       - name: Upload downloaded CSV
         uses: actions/upload-artifact@v4
