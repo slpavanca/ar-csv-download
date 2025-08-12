@@ -1,39 +1,19 @@
-name: scheduled-ar-travels
+name: Run Playwright Script
 
 on:
-  schedule:
-    # change cron as needed (UTC). Example below runs daily at 01:30 UTC.
-    - cron: '30 1 * * *'
   workflow_dispatch:
 
 jobs:
-  run-playwright:
+  run:
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright/python:latest
-
+      image: mcr.microsoft.com/playwright/python:v1.54.0-jammy
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Python deps
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      - name: Create output dir
-        run: mkdir -p ./artifacts
-
-      - name: Run Playwright script
-        env:
-          AR_LOGIN: ${{ secrets.AR_LOGIN }}
-          AR_PASSWORD: ${{ secrets.AR_PASSWORD }}
-          SAVE_DIR: /github/workspace/artifacts
-          HEADLESS: "1"
+      - name: Run script
         run: python main.py
-
-      - name: Upload CSV artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ar-csv
-          path: artifacts/**
