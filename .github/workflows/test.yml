@@ -1,28 +1,17 @@
-name: Test Cron Trigger
+name: Cron Test
 
 on:
   schedule:
-    # Runs every 5 minutes
-    - cron: "*/5 * * * *"
-  workflow_dispatch: # Allow manual trigger
+    - cron: "*/5 * * * *" # Runs every 5 minutes (UTC time)
+  workflow_dispatch: # Allows manual trigger
 
 jobs:
-  test-cron:
+  print-time:
     runs-on: ubuntu-latest
     steps:
-      - name: Show current time in UTC and IST
-        run: |
-          echo "✅ Workflow triggered"
-          echo "UTC time: $(date -u)"
-          echo "IST time: $(TZ='Asia/Kolkata' date)"
+      - name: Show UTC time
+        run: date -u
 
-      - name: Create test file
-        run: |
-          mkdir -p output
-          echo "Run at $(date -u) UTC / $(TZ='Asia/Kolkata' date) IST" > output/cron_test.txt
+      - name: Show India time
+        run: TZ='Asia/Kolkata' date
 
-      - name: Upload file as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cron-test-file
-          path: output/cron_test.txt
