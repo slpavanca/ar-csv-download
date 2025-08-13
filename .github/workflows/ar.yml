@@ -3,7 +3,7 @@ name: Download and Upload CSV
 on:
   workflow_dispatch:  # manual trigger
   schedule:
-    # Temporary test run at 15:15 IST (09:45 UTC)
+    # Temporary test run at 15:15 IST (09:45 UTC)time
     - cron: '45 9 * * *'
     
 jobs:
