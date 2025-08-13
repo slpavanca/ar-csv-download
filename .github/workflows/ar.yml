@@ -1,8 +1,11 @@
 name: Download and Upload CSV
 
 on:
-  workflow_dispatch:
-
+  workflow_dispatch:  # manual trigger
+  schedule:
+    # Test run at 14:14 IST (08:44 UTC)
+    - cron: '44 8 * * *'
+    
 jobs:
   download-report:
     runs-on: ubuntu-latest
