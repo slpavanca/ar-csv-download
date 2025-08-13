@@ -85,7 +85,7 @@ def run():
             """)
             page.click("#report_date_range_chosen .chosen-single")
             page.locator("ul.chosen-results li", has_text="Yesterday").click()
-            page.wait_for_timeout(2000)
+            page.wait_for_timeout(6000)
 
             # --- Run report & download CSV ---
             page.click('input[type="submit"][value="Run Report"]')
