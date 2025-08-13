@@ -38,16 +38,19 @@ jobs:
           name: downloaded-report
           path: artifacts/*
 
-      - name: Download gdrive CLI
+      - name: Install rclone
         run: |
-          curl -L -o gdrive https://github.com/prasmussen/gdrive/releases/download/2.1.1/gdrive-linux-x64
-          chmod +x gdrive
+          curl -O https://downloads.rclone.org/v1.62.2/rclone-v1.62.2-linux-amd64.zip
+          unzip rclone-v1.62.2-linux-amd64.zip
+          sudo cp rclone-v1.62.2-linux-amd64/rclone /usr/bin/
+          sudo chmod +x /usr/bin/rclone
+          rclone --version
 
-      - name: Restore gdrive OAuth token
+      - name: Restore rclone config
         run: |
-          mkdir -p ~/.gdrive
-          echo "${{ secrets.GDRIVE_TOKEN_BASE64 }}" | base64 --decode > ~/.gdrive/token_v2.json
+          mkdir -p ~/.config/rclone
+          echo "${{ secrets.RCLONE_CONFIG_BASE64 }}" | base64 --decode > ~/.config/rclone/rclone.conf
 
-      - name: Upload CSV files to Google Drive
+      - name: Upload CSV files to Google Drive using rclone
         run: |
-          ./gdrive upload --parent ${{ secrets.GDRIVE_CSV_FOLDER_ID }} artifacts/"AR Bus Service Collection Report Detailed Data"*.csv
+          rclone copy artifacts/ "gdrive:${{ secrets.GDRIVE_CSV_FOLDER_ID }}" --include "*.csv" --verbose
