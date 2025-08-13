@@ -50,4 +50,4 @@ jobs:
 
       - name: Upload CSV files to Google Drive
         run: |
-          ./gdrive upload --parent YOUR_FOLDER_ID artifacts/"AR Bus Service Collection Report Detailed Data"*.csv
+          ./gdrive upload --parent ${{ secrets.GDRIVE_FOLDER_ID }} artifacts/"AR Bus Service Collection Report Detailed Data"*.csv
