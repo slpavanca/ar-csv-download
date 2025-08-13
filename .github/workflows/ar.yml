@@ -53,4 +53,4 @@ jobs:
 
       - name: Upload CSV files to Google Drive using rclone
         run: |
-          rclone copy artifacts/ "gdrive:${{ secrets.GDRIVE_CSV_FOLDER_ID }}" --include "*.csv" --verbose
+          rclone copy artifacts/ "prdrive:${{ secrets.GDRIVE_CSV_FOLDER_ID }}" --include "*.csv" --verbose
