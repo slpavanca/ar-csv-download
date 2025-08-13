@@ -93,7 +93,7 @@ def run():
             page.wait_for_selector("a.btn.btn-primary.hide_for_print", timeout=60000)
 
             # --- Wait for and handle download with extended timeout ---
-            with page.expect_download(timeout=120000) as detailed_download:  # 2 minutes
+            with page.expect_download(timeout=60000) as detailed_download:  # 1 minutes
                 page.locator(
                     "a.btn.btn-primary.hide_for_print", 
                     has_text="Show Detailed View (CSV)"
