@@ -3,8 +3,8 @@ name: AR Download and Upload CSV
 on:
   workflow_dispatch:  # manual trigger
   schedule:
-    # Daily at 5:10 AM IST (23:40 UTC previous day)
-    - cron: '40 23 * * *'
+    # Daily at 5:32 AM IST (00:02 UTC same day)
+    - cron: '2 0 * * *'
     
 jobs:
   download-report:
