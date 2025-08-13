@@ -1,0 +1,53 @@
+name: Download and Upload CSV
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fix DNS for GitHub Actions
+        run: |
+          sudo bash -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
+          cat /etc/resolv.conf
+
+      - name: Install Playwright and dependencies
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+
+      - name: Run download script
+        run: python main.py
+        env:
+          AR_LOGIN: ${{ secrets.AR_LOGIN }}
+          AR_PASSWORD: ${{ secrets.AR_PASSWORD }}
+
+      - name: Upload downloaded CSV as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-report
+          path: artifacts/*
+
+      - name: Download gdrive CLI
+        run: |
+          curl -L -o gdrive https://github.com/prasmussen/gdrive/releases/download/2.1.1/gdrive-linux-x64
+          chmod +x gdrive
+
+      - name: Restore gdrive OAuth token
+        run: |
+          mkdir -p ~/.gdrive
+          echo "${{ secrets.GDRIVE_TOKEN_BASE64 }}" | base64 --decode > ~/.gdrive/token_v2.json
+
+      - name: Upload CSV files to Google Drive
+        run: |
+          ./gdrive upload --parent YOUR_FOLDER_ID artifacts/"AR Bus Service Collection Report Detailed Data"*.csv
