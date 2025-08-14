@@ -4,7 +4,8 @@ on:
   workflow_dispatch:  # manual trigger
   schedule:
     # Daily at 5:32 AM IST (00:02 UTC same day)
-    - cron: '2 0 * * *'
+    - cron: "2 0 * * *"
+
     
 jobs:
   download-report:
